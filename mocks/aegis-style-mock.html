@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aegis — style mock</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+/* Hallmark · genre: editorial · macrostructure: Marquee Hero · theme: Brutal (custom OKLCH, anchor hue 250)
+ * enrichment: none (real photograph) · nav: N9 edge-aligned minimal · footer: Ft2 inline single line
+ * pre-emit critique: P4 H4 E4 S4 R5 V4
+ */
+
+html, body { overflow-x: clip; }
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.wrap {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: var(--space-xl);
+}
+@media (max-width: 640px) {
+  .wrap { padding-inline: var(--space-lg); }
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.02;
+  margin: 0;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  text-wrap: balance;
+}
+
+p { margin: 0; }
+
+/* ---------- nav (N9 edge-aligned minimal) ---------- */
+.nav {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: var(--z-sticky);
+  padding: var(--space-lg) var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+@media (max-width: 640px) {
+  .nav { padding: var(--space-md) var(--space-lg); }
+}
+.nav__mark {
+  font-family: var(--font-outlier);
+  font-weight: 500;
+  font-size: var(--text-md);
+  letter-spacing: 0.02em;
+  color: var(--color-paper);
+}
+.nav__cta {
+  font-family: var(--font-outlier);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-paper);
+  border-bottom: 1px solid color-mix(in oklch, var(--color-paper) 45%, transparent);
+  padding-block-end: var(--space-3xs);
+  transition: border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+  white-space: nowrap;
+}
+.nav__cta:hover, .nav__cta:focus-visible {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* ---------- hero (Marquee + photographic fold, existing art) ---------- */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+}
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklch, var(--color-ink) 55%, transparent) 0%,
+    transparent 22%,
+    transparent 62%,
+    color-mix(in oklch, var(--color-ink) 70%, transparent) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+.sky {
+  position: absolute;
+  top: -6%;
+  bottom: -6%;
+  left: -4vw;
+  width: 108vw;
+  background-image: url("../assets/background.jpg");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  animation: pan 30s linear infinite alternate;
+  animation-delay: -8s;
+}
+@keyframes pan {
+  0%   { transform: translateX(4vw);    animation-timing-function: ease-in; }
+  15%  { transform: translateX(2.64vw); animation-timing-function: linear; }
+  85%  { transform: translateX(-2.64vw); animation-timing-function: ease-out; }
+  100% { transform: translateX(-4vw); }
+}
+.bust {
+  position: absolute;
+  right: 4%;
+  bottom: 0;
+  height: 78vh;
+  width: auto;
+  object-fit: contain;
+  filter: url(#grain);
+  z-index: 1;
+}
+.hero__copy {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: var(--space-3xl);
+  padding-inline: var(--space-xl);
+}
+@media (max-width: 640px) {
+  .hero__copy { bottom: var(--space-2xl); padding-inline: var(--space-lg); }
+}
+.hero__headline {
+  color: var(--color-paper);
+  font-size: var(--text-display);
+  max-width: 14ch;
+  letter-spacing: -0.02em;
+}
+.hero__rule {
+  height: 2px;
+  background: var(--color-ink);
+  border: none;
+  margin: 0;
+}
+
+/* ---------- statement (Long-Document-style prose) ---------- */
+.statement {
+  padding-block: var(--space-3xl) var(--space-2xl);
+}
+.statement p {
+  max-width: 62ch;
+  font-size: var(--text-lg);
+  color: var(--color-muted);
+}
+.statement strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+/* ---------- section head (S2 hanging) ---------- */
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-2xl);
+}
+.section-head__mark {
+  width: 10px;
+  height: 10px;
+  background: var(--color-accent);
+  flex: none;
+  transform: translateY(-0.3em);
+}
+.section-head h2 {
+  font-size: var(--text-2xl);
+}
+
+/* ---------- selected work ---------- */
+.work {
+  padding-block: var(--space-lg) var(--space-3xl);
+}
+.work__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  grid-template-columns: 1.15fr 1fr 0.9fr;
+  gap: var(--space-2xl);
+}
+@media (max-width: 860px) {
+  .work__grid { grid-template-columns: 1fr; gap: var(--space-2xl); }
+}
+.project {
+  border-top: 1px solid var(--color-rule);
+  padding-top: var(--space-lg);
+}
+.project__diagram {
+  aspect-ratio: 4 / 3;
+  background: var(--color-paper-2);
+  margin-bottom: var(--space-md);
+}
+.project__diagram svg { width: 100%; height: 100%; display: block; }
+.project__title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
+.project__meta {
+  font-family: var(--font-outlier);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- footer (Ft2 inline single line) ---------- */
+footer {
+  border-top: 1px solid var(--color-rule);
+  padding-block: var(--space-lg);
+}
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-lg);
+  justify-content: space-between;
+  font-family: var(--font-outlier);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+  color: var(--color-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky { animation-duration: 0.001ms; animation-iteration-count: 1; }
+}
+</style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0.75 0" result="noiseAlpha"/>
+      <feComposite in="noiseAlpha" in2="SourceAlpha" operator="in" result="maskedNoise"/>
+      <feBlend in="SourceGraphic" in2="maskedNoise" mode="overlay"/>
+    </filter>
+  </svg>
+
+  <nav class="nav">
+    <span class="nav__mark">AEGIS</span>
+    <a class="nav__cta" href="#contact">Contact</a>
+  </nav>
+
+  <section class="hero">
+    <div class="sky"></div>
+    <img class="bust" src="../assets/bust.png" alt="">
+    <div class="hero__scrim"></div>
+    <div class="hero__copy">
+      <h1 class="hero__headline">Buildings built to outlast their brief.</h1>
+    </div>
+  </section>
+  <hr class="hero__rule">
+
+  <div class="wrap">
+    <section class="statement">
+      <p>Aegis is a small studio. We take on a handful of buildings a year — civic, cultural, and residential — and design each one to be <strong>load-bearing for a century</strong>, not fashionable for a decade. Site conditions, materials, and the client's actual brief decide the form. Nothing is decided by trend.</p>
+    </section>
+
+    <section class="work" id="work">
+      <div class="section-head">
+        <span class="section-head__mark" aria-hidden="true"></span>
+        <h2>Selected work</h2>
+      </div>
+      <div class="work__grid">
+
+        <div class="project">
+          <div class="project__diagram">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="90" width="160" height="45" fill="none" stroke="var(--color-ink)" stroke-width="1" opacity="0.55"/>
+              <path d="M20 90 L100 40 L180 90" fill="none" stroke="var(--color-ink)" stroke-width="1" opacity="0.55"/>
+              <line x1="60" y1="90" x2="60" y2="135" stroke="var(--color-ink)" stroke-width="1" opacity="0.3"/>
+              <line x1="140" y1="90" x2="140" y2="135" stroke="var(--color-ink)" stroke-width="1" opacity="0.3"/>
+              <line x1="100" y1="40" x2="100" y2="90" stroke="var(--color-accent)" stroke-width="1" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="project__title">Threshold House</div>
+          <div class="project__meta">RESIDENTIAL &middot; CONCRETE + OAK &middot; 2024</div>
+        </div>
+
+        <div class="project">
+          <div class="project__diagram">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+              <rect x="30" y="30" width="140" height="90" fill="none" stroke="var(--color-ink)" stroke-width="1" opacity="0.55"/>
+              <line x1="30" y1="60" x2="170" y2="60" stroke="var(--color-ink)" stroke-width="1" opacity="0.3"/>
+              <line x1="80" y1="30" x2="80" y2="120" stroke="var(--color-ink)" stroke-width="1" opacity="0.3"/>
+              <line x1="130" y1="30" x2="130" y2="120" stroke="var(--color-accent)" stroke-width="1" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="project__title">Kastellet Reading Rooms</div>
+          <div class="project__meta">CIVIC &middot; BOARD-FORMED CONCRETE &middot; 2022</div>
+        </div>
+
+        <div class="project">
+          <div class="project__diagram">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 120 L20 60 L100 25 L180 60 L180 120 Z" fill="none" stroke="var(--color-ink)" stroke-width="1" opacity="0.55"/>
+              <line x1="20" y1="90" x2="180" y2="90" stroke="var(--color-ink)" stroke-width="1" opacity="0.3"/>
+              <line x1="100" y1="25" x2="100" y2="120" stroke="var(--color-accent)" stroke-width="1" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="project__title">The Long Room</div>
+          <div class="project__meta">GALLERY &middot; BRICK + STEEL &middot; 2023</div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <footer id="contact">
+    <div class="wrap foot">
+      <span>AEGIS — ARCHITECTURE STUDIO</span>
+      <span>STUDIO@AEGIS.WORK</span>
+      <span>&copy; 2026</span>
+    </div>
+  </footer>
+</body>
+</html>

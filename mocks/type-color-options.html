@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aegis — type &amp; color options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Geist+Mono:wght@400;500&family=Big+Shoulders+Display:wght@700;900&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;700&family=Geist:wght@400;600&family=DM+Serif+Display&family=EB+Garamond:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; overflow-x: clip; }
+  body { font-family: ui-monospace, monospace; }
+
+  .option {
+    padding: 4.5rem 2.5rem 4rem;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+  .option__inner { max-width: 900px; margin-inline: auto; }
+
+  .option__label {
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 1.75rem;
+  }
+
+  .option__headline {
+    margin: 0 0 1.25rem;
+    line-height: 1.02;
+    font-size: clamp(2rem, 4.2vw, 3.4rem);
+    max-width: 16ch;
+    text-wrap: balance;
+  }
+
+  .option__body {
+    margin: 0 0 1.75rem;
+    max-width: 58ch;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .option__meta {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 1.5rem;
+  }
+
+  .swatches {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .swatch {
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+
+  @media (max-width: 640px) {
+    .option { padding: 3rem 1.25rem 2.75rem; }
+  }
+
+  /* ---------------- 1. Cool Steel ---------------- */
+  #opt1 {
+    background: oklch(96% 0.008 250);
+    color: oklch(18% 0.010 250);
+  }
+  #opt1 .option__headline { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; }
+  #opt1 .option__body { font-family: "Switzer", ui-sans-serif, sans-serif; color: oklch(40% 0.006 250); }
+  #opt1 .option__label, #opt1 .option__meta { font-family: "Geist Mono", monospace; }
+
+  /* ---------------- 2. Iron Oxide ---------------- */
+  #opt2 {
+    background: oklch(95% 0.012 70);
+    color: oklch(19% 0.012 40);
+  }
+  #opt2 .option__headline { font-family: "Big Shoulders Display", sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; }
+  #opt2 .option__body { font-family: "IBM Plex Sans", sans-serif; color: oklch(38% 0.010 50); }
+  #opt2 .option__label, #opt2 .option__meta { font-family: "IBM Plex Mono", monospace; }
+
+  /* ---------------- 3. Ash (dark) ---------------- */
+  #opt3 {
+    background: oklch(15% 0.010 250);
+    color: oklch(94% 0.006 250);
+  }
+  #opt3 .option__headline { font-family: "Space Grotesk", sans-serif; font-weight: 700; }
+  #opt3 .option__body { font-family: "Geist", sans-serif; color: oklch(72% 0.006 250); }
+  #opt3 .option__label, #opt3 .option__meta { font-family: "Space Grotesk", sans-serif; letter-spacing: 0.08em; }
+  #opt3 .swatch:first-child { border-color: rgba(255,255,255,0.2); }
+
+  /* ---------------- 4. Bone / Classical ---------------- */
+  #opt4 {
+    background: oklch(95% 0.014 85);
+    color: oklch(22% 0.012 150);
+  }
+  #opt4 .option__headline { font-family: "DM Serif Display", serif; font-weight: 400; }
+  #opt4 .option__body { font-family: "EB Garamond", serif; font-size: 1.15rem; color: oklch(35% 0.010 150); }
+  #opt4 .option__label, #opt4 .option__meta { font-family: "IBM Plex Mono", monospace; }
+
+  /* ---------------- 5. Slab Mono ---------------- */
+  #opt5 {
+    background: oklch(98% 0.002 250);
+    color: oklch(14% 0.002 250);
+  }
+  #opt5 .option__headline { font-family: "JetBrains Mono", monospace; font-weight: 700; letter-spacing: -0.01em; }
+  #opt5 .option__body { font-family: "JetBrains Mono", monospace; font-size: 0.98rem; color: oklch(35% 0.002 250); }
+  #opt5 .option__label, #opt5 .option__meta { font-family: "JetBrains Mono", monospace; }
+</style>
+</head>
+<body>
+
+  <section class="option" id="opt1">
+    <div class="option__inner">
+      <div class="option__label">Option 1 — Cool Steel</div>
+      <h1 class="option__headline">Buildings built to outlast their brief.</h1>
+      <p class="option__body">Aegis is a small studio. We take on a handful of buildings a year — civic, cultural, and residential — designed to be load-bearing for a century, not fashionable for a decade.</p>
+      <div class="option__meta">Bricolage Grotesque · Switzer · Geist Mono</div>
+      <div class="swatches">
+        <div class="swatch" style="background: oklch(96% 0.008 250)"></div>
+        <div class="swatch" style="background: oklch(56% 0.006 250)"></div>
+        <div class="swatch" style="background: oklch(18% 0.010 250)"></div>
+        <div class="swatch" style="background: oklch(55% 0.16 250)"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="option" id="opt2">
+    <div class="option__inner">
+      <div class="option__label">Option 2 — Iron Oxide</div>
+      <h1 class="option__headline">Buildings built to outlast their brief.</h1>
+      <p class="option__body">Aegis is a small studio. We take on a handful of buildings a year — civic, cultural, and residential — designed to be load-bearing for a century, not fashionable for a decade.</p>
+      <div class="option__meta">Big Shoulders Display · IBM Plex Sans · IBM Plex Mono</div>
+      <div class="swatches">
+        <div class="swatch" style="background: oklch(95% 0.012 70)"></div>
+        <div class="swatch" style="background: oklch(58% 0.010 60)"></div>
+        <div class="swatch" style="background: oklch(19% 0.012 40)"></div>
+        <div class="swatch" style="background: oklch(56% 0.17 45)"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="option" id="opt3">
+    <div class="option__inner">
+      <div class="option__label">Option 3 — Ash</div>
+      <h1 class="option__headline">Buildings built to outlast their brief.</h1>
+      <p class="option__body">Aegis is a small studio. We take on a handful of buildings a year — civic, cultural, and residential — designed to be load-bearing for a century, not fashionable for a decade.</p>
+      <div class="option__meta">Space Grotesk · Geist</div>
+      <div class="swatches">
+        <div class="swatch" style="background: oklch(15% 0.010 250)"></div>
+        <div class="swatch" style="background: oklch(58% 0.008 250)"></div>
+        <div class="swatch" style="background: oklch(94% 0.006 250)"></div>
+        <div class="swatch" style="background: oklch(66% 0.14 250)"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="option" id="opt4">
+    <div class="option__inner">
+      <div class="option__label">Option 4 — Bone / Classical</div>
+      <h1 class="option__headline">Buildings built to outlast their brief.</h1>
+      <p class="option__body">Aegis is a small studio. We take on a handful of buildings a year — civic, cultural, and residential — designed to be load-bearing for a century, not fashionable for a decade.</p>
+      <div class="option__meta">DM Serif Display · EB Garamond · IBM Plex Mono</div>
+      <div class="swatches">
+        <div class="swatch" style="background: oklch(95% 0.014 85)"></div>
+        <div class="swatch" style="background: oklch(60% 0.010 100)"></div>
+        <div class="swatch" style="background: oklch(22% 0.012 150)"></div>
+        <div class="swatch" style="background: oklch(50% 0.09 155)"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="option" id="opt5">
+    <div class="option__inner">
+      <div class="option__label">Option 5 — Slab Mono</div>
+      <h1 class="option__headline">Buildings built to outlast their brief.</h1>
+      <p class="option__body">Aegis is a small studio. We take on a handful of buildings a year — civic, cultural, and residential — designed to be load-bearing for a century, not fashionable for a decade.</p>
+      <div class="option__meta">JetBrains Mono (single family)</div>
+      <div class="swatches">
+        <div class="swatch" style="background: oklch(98% 0.002 250)"></div>
+        <div class="swatch" style="background: oklch(60% 0.002 250)"></div>
+        <div class="swatch" style="background: oklch(14% 0.002 250)"></div>
+        <div class="swatch" style="background: oklch(70% 0.20 130)"></div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

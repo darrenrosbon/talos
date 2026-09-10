@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talos — scrollbar concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --paper:  oklch(95% 0.012 70);
+    --paper-2: oklch(98% 0.006 70);
+    --ink:    oklch(19% 0.012 40);
+    --muted:  oklch(40% 0.010 50);
+    --rule:   oklch(82% 0.010 60);
+    --oxide:  oklch(56% 0.17 45);
+    --font-display: "Big Shoulders Display", sans-serif;
+    --font-body: "IBM Plex Sans", sans-serif;
+    --font-mono: "IBM Plex Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; overflow-x: clip; }
+  body {
+    background: oklch(14% 0.01 40);
+    color: var(--paper);
+    font-family: var(--font-mono);
+    padding: 2rem;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    margin: 0 0 2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: oklch(20% 0.01 40);
+    border: 1px solid oklch(30% 0.01 40);
+  }
+  .card__label {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: oklch(70% 0.01 40);
+    padding: 0.9rem 1rem 0.7rem;
+    border-bottom: 1px solid oklch(30% 0.01 40);
+  }
+  .scroll-box {
+    height: 260px;
+    overflow-y: auto;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    padding: 1.1rem 1.2rem;
+    position: relative;
+  }
+  .scroll-box h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    margin: 0 0 0.5rem;
+  }
+  .scroll-box p {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0 0 1rem;
+  }
+
+  /* 1. Minimal hairline — thin oxide thumb, invisible track */
+  #s1 { scrollbar-width: thin; scrollbar-color: var(--oxide) transparent; }
+  #s1::-webkit-scrollbar { width: 4px; }
+  #s1::-webkit-scrollbar-track { background: transparent; }
+  #s1::-webkit-scrollbar-thumb { background: var(--oxide); border-radius: 0; }
+
+  /* 2. Blocky industrial — thick ink track, oxide thumb, hard edges */
+  #s2 { scrollbar-width: auto; scrollbar-color: var(--oxide) var(--ink); }
+  #s2::-webkit-scrollbar { width: 14px; }
+  #s2::-webkit-scrollbar-track { background: var(--ink); }
+  #s2::-webkit-scrollbar-thumb { background: var(--oxide); border-radius: 0; border: 3px solid var(--ink); }
+
+  /* 3. Bracket tick — thumb rendered as a short bracket mark via gradient */
+  #s3 { scrollbar-width: thin; scrollbar-color: var(--ink) var(--paper-2); }
+  #s3::-webkit-scrollbar { width: 10px; }
+  #s3::-webkit-scrollbar-track { background: var(--paper-2); border-left: 1px solid var(--rule); }
+  #s3::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--ink), var(--ink)) center / 2px 100% no-repeat,
+                linear-gradient(var(--oxide), var(--oxide)) center top / 2px 8px no-repeat,
+                linear-gradient(var(--oxide), var(--oxide)) center bottom / 2px 8px no-repeat;
+    border-radius: 0;
+  }
+
+  /* 4. Inset hairline — very thin, ink track line, oxide thumb */
+  #s4 { scrollbar-width: thin; scrollbar-color: var(--oxide) var(--rule); }
+  #s4::-webkit-scrollbar { width: 3px; }
+  #s4::-webkit-scrollbar-track { background: var(--rule); }
+  #s4::-webkit-scrollbar-thumb { background: var(--oxide); border-radius: 0; }
+
+  /* 5. Progress readout — thumb + live mono percentage label */
+  #s5 { scrollbar-width: thin; scrollbar-color: var(--ink) transparent; }
+  #s5::-webkit-scrollbar { width: 6px; }
+  #s5::-webkit-scrollbar-track { background: transparent; }
+  #s5::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 0; }
+  .progress-readout {
+    position: absolute;
+    top: 0.6rem;
+    right: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--oxide);
+    background: var(--paper);
+    padding-left: 0.4rem;
+  }
+
+  .filler p { margin-bottom: 0.9rem; }
+</style>
+</head>
+<body>
+  <h1>Talos — custom scrollbar concepts</h1>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card__label">1 — Minimal hairline</div>
+      <div class="scroll-box" id="s1">
+        <h3>The Patrol</h3>
+        <div class="filler">
+          <p>Continuous, autonomous monitoring across network, cloud, and API surface. Nothing sleeps, nothing is checked on a schedule.</p>
+          <p>Talos runs in the background at all times, watching for the moment something changes.</p>
+          <p>A thin 4px oxide line, no visible track — the scrollbar barely announces itself, matching the restraint of the rest of the page.</p>
+          <p>Scroll to see the thumb move against a transparent track.</p>
+          <p>More filler content so this box actually scrolls in the demo.</p>
+          <p>Nothing sleeps, nothing is checked on a schedule.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__label">2 — Blocky industrial</div>
+      <div class="scroll-box" id="s2">
+        <h3>The Scan</h3>
+        <div class="filler">
+          <p>AI-driven analysis re-evaluates your entire surface continuously, catching new weak points the moment they appear.</p>
+          <p>A thick 14px scrollbar with a solid ink track and a hard-edged oxide thumb — the heaviest, most brutalist option.</p>
+          <p>Reads more like a physical slider on a piece of equipment than a browser scrollbar.</p>
+          <p>Scroll to see the thumb move against the dark track.</p>
+          <p>More filler content so this box actually scrolls in the demo.</p>
+          <p>Not on a monthly or quarterly cycle.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__label">3 — Bracket tick</div>
+      <div class="scroll-box" id="s3">
+        <h3>The Intervention</h3>
+        <div class="filler">
+          <p>Confirmed threats are contained automatically. Not flagged for later — stopped, while it's still happening.</p>
+          <p>The thumb renders as a bracket — two short oxide ticks with a thin ink spine between them — instead of a solid bar.</p>
+          <p>References drafting/technical marks rather than a default UI element.</p>
+          <p>Scroll to see the bracket move along the track.</p>
+          <p>More filler content so this box actually scrolls in the demo.</p>
+          <p>Stopped, while it's still happening.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__label">4 — Inset hairline</div>
+      <div class="scroll-box" id="s4">
+        <h3>The Coastline</h3>
+        <div class="filler">
+          <p>Attack-surface mapping updates as your infrastructure changes. What needed guarding last quarter isn't what needs guarding today.</p>
+          <p>A 3px scrollbar, thinnest of the set — a visible pale track line with a slightly darker oxide thumb riding on it.</p>
+          <p>Reads as a measurement scale rather than a control.</p>
+          <p>Scroll to see the thumb move along the hairline track.</p>
+          <p>More filler content so this box actually scrolls in the demo.</p>
+          <p>What needs guarding today.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__label">5 — Progress readout</div>
+      <div class="scroll-box" id="s5">
+        <span class="progress-readout" id="pct">0%</span>
+        <h3>Human Escalation</h3>
+        <div class="filler">
+          <p>Every critical finding still routes to a person before anything drastic happens. Autonomy has a ceiling here on purpose.</p>
+          <p>A slim ink scrollbar paired with a live mono percentage readout, top-right — tells you exactly how far through the page you are.</p>
+          <p>The most "product/dashboard" of the five — makes the scrollbar itself feel like an instrument reading.</p>
+          <p>Scroll to watch the percentage update.</p>
+          <p>More filler content so this box actually scrolls in the demo.</p>
+          <p>Autonomy has a ceiling here on purpose.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const box = document.getElementById('s5');
+    const pct = document.getElementById('pct');
+    box.addEventListener('scroll', () => {
+      const max = box.scrollHeight - box.clientHeight;
+      const p = max > 0 ? Math.round((box.scrollTop / max) * 100) : 0;
+      pct.textContent = p + '%';
+    });
+  </script>
+</body>
+</html>

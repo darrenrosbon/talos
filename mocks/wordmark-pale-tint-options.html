@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aegis — pale-tint back options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; overflow-x: clip; }
+  body {
+    background: oklch(95% 0.012 70);
+    color: oklch(19% 0.012 40);
+    font-family: "IBM Plex Mono", monospace;
+    padding: 2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.1rem;
+    max-width: 1100px;
+    margin-inline: auto;
+  }
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: oklch(98% 0.006 70);
+    border: 1px solid oklch(80% 0.010 60);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 165px;
+  }
+  .card__mark { flex: 1; display: flex; align-items: center; }
+  .card__label {
+    font-size: 0.64rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    border-top: 1px solid oklch(80% 0.010 60);
+    padding-top: 0.5rem;
+    margin-top: 0.6rem;
+  }
+  .wordmark {
+    position: relative;
+    font-family: "Big Shoulders Display", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 2.3rem;
+  }
+  .wordmark__back {
+    position: absolute; top: 0; left: 0;
+    transform: translate(6px, 6px);
+    z-index: 1;
+  }
+  .wordmark__front {
+    position: relative;
+    z-index: 2;
+    color: oklch(19% 0.012 40);
+  }
+</style>
+</head>
+<body>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const options = [
+      { label: "1 — Oxide / rust", hue: 45,  chroma: 0.065, light: 88 },
+      { label: "2 — Amber / gold", hue: 75,  chroma: 0.06,  light: 88 },
+      { label: "3 — Olive / moss", hue: 120, chroma: 0.05,  light: 87 },
+      { label: "4 — Verdigris / teal", hue: 175, chroma: 0.045, light: 87 },
+      { label: "5 — Steel blue", hue: 230, chroma: 0.045, light: 88 },
+      { label: "6 — Indigo / violet", hue: 285, chroma: 0.05,  light: 88 },
+      { label: "7 — Plum / mauve", hue: 330, chroma: 0.05,  light: 88 },
+      { label: "8 — Blush / rose", hue: 15,  chroma: 0.055, light: 89 },
+      { label: "9 — Sand / tan (neutral warm)", hue: 70, chroma: 0.02, light: 87 },
+      { label: "10 — Cool grey (no hue)", hue: 250, chroma: 0.006, light: 86 },
+    ];
+
+    const grid = document.getElementById('grid');
+    options.forEach(opt => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const back = `oklch(${opt.light}% ${opt.chroma} ${opt.hue})`;
+      card.innerHTML = `
+        <div class="card__mark">
+          <div class="wordmark">
+            <span class="wordmark__back" style="color: ${back}">AEGIS</span>
+            <span class="wordmark__front">AEGIS</span>
+          </div>
+        </div>
+        <div class="card__label">${opt.label}</div>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

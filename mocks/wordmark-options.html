@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aegis — wordmark options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; overflow-x: clip; }
+  body {
+    background: oklch(95% 0.012 70);
+    color: oklch(19% 0.012 40);
+    font-family: "IBM Plex Mono", monospace;
+    padding: 2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    max-width: 1100px;
+    margin-inline: auto;
+  }
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: oklch(98% 0.006 70);
+    border: 1px solid oklch(80% 0.010 60);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 210px;
+  }
+  .card__mark {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .card__label {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    border-top: 1px solid oklch(80% 0.010 60);
+    padding-top: 0.6rem;
+    margin-top: 0.75rem;
+  }
+  .accent { color: oklch(56% 0.17 45); }
+  .wm { font-family: "Big Shoulders Display", sans-serif; color: oklch(19% 0.012 40); }
+
+  /* 1. Baseline — tight, black, all caps */
+  #w1 .wm { font-size: 2.6rem; font-weight: 900; letter-spacing: -0.03em; text-transform: uppercase; }
+
+  /* 2. Sentence case, lighter, quieter */
+  #w2 .wm { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; }
+
+  /* 3. Custom "A" — extended lintel crossbar */
+  #w3 .card__mark { gap: 0.05em; }
+  .lintel-a { display: flex; align-items: flex-end; }
+  .lintel-a svg { display: block; }
+  #w3 .wm { font-size: 2.6rem; font-weight: 900; letter-spacing: -0.03em; text-transform: uppercase; }
+
+  /* 4. Wide inscriptional tracking */
+  #w4 .wm { font-size: 1.7rem; font-weight: 700; letter-spacing: 0.38em; text-transform: uppercase; }
+
+  /* 5. Stacked two-line block lockup */
+  #w5 .card__mark { flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; }
+  .wm-line { font-family: "Big Shoulders Display", sans-serif; text-transform: uppercase; line-height: 0.82; letter-spacing: -0.02em; }
+  .wm-line--top { font-size: 2.4rem; font-weight: 900; color: oklch(19% 0.012 40); }
+  .wm-line--bottom { font-size: 1.5rem; font-weight: 700; color: oklch(56% 0.17 45); }
+</style>
+</head>
+<body>
+  <div class="grid">
+
+    <div class="card" id="w1">
+      <div class="card__mark"><div class="wm">AEGIS</div></div>
+      <div class="card__label">1 — Tight, black, all caps</div>
+    </div>
+
+    <div class="card" id="w2">
+      <div class="card__mark"><div class="wm">Aegis</div></div>
+      <div class="card__label">2 — Sentence case, quieter</div>
+    </div>
+
+    <div class="card" id="w3">
+      <div class="card__mark">
+        <div class="lintel-a">
+          <svg width="40" height="46" viewBox="0 0 40 46" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="6" width="40" height="6" fill="oklch(19% 0.012 40)"/>
+            <polygon points="20,12 30,44 24,44 20,30 16,44 10,44" fill="oklch(19% 0.012 40)"/>
+          </svg>
+        </div>
+        <div class="wm">EGIS</div>
+      </div>
+      <div class="card__label">3 — Custom lintel "A"</div>
+    </div>
+
+    <div class="card" id="w4">
+      <div class="card__mark"><div class="wm">AEGIS</div></div>
+      <div class="card__label">4 — Wide inscriptional tracking</div>
+    </div>
+
+    <div class="card" id="w5">
+      <div class="card__mark">
+        <div class="wm-line wm-line--top">AE</div>
+        <div class="wm-line wm-line--bottom">GIS</div>
+      </div>
+      <div class="card__label">5 — Stacked block lockup</div>
+    </div>
+
+  </div>
+</body>
+</html>

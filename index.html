@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --paper:  oklch(95% 0.012 70);
+    --paper-2: oklch(98% 0.006 70);
+    --ink:    oklch(19% 0.012 40);
+    --muted:  oklch(40% 0.010 50);
+    --rule:   oklch(82% 0.010 60);
+    --oxide:  oklch(56% 0.17 45);
+    --oxide-pale: oklch(87% 0.02 70);
+
+    --font-display: "Big Shoulders Display", sans-serif;
+    --font-body: "IBM Plex Sans", sans-serif;
+    --font-mono: "IBM Plex Mono", monospace;
+
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2.5rem;
+    --space-2xl: 4rem;
+    --space-3xl: 6rem;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: transparent;
+  }
+  body {
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  @media (max-width: 860px) {
+    html, body { height: auto; overflow: visible; }
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--oxide); outline-offset: 2px; }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.02;
+    margin: 0;
+    overflow-wrap: anywhere;
+    min-width: 0;
+    text-wrap: balance;
+  }
+  p { margin: 0; }
+
+  .wrap {
+    max-width: 760px;
+    padding-inline: var(--space-xl);
+  }
+  @media (max-width: 640px) {
+    .wrap { padding-inline: var(--space-lg); }
+  }
+
+  /* ---------- fixed, fullscreen background — always visible, never scrolls ---------- */
+  .fixed-scene {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background: #000;
+  }
+  .sky {
+    position: absolute;
+    top: -6%;
+    bottom: -6%;
+    left: -4vw;
+    width: 108vw;
+    background-image: url("assets/background.jpg");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    animation: pan 30s linear infinite alternate;
+    animation-delay: -8s;
+  }
+  @keyframes pan {
+    0%   { transform: translateX(4vw);    animation-timing-function: ease-in; }
+    15%  { transform: translateX(2.64vw); animation-timing-function: linear; }
+    85%  { transform: translateX(-2.64vw); animation-timing-function: ease-out; }
+    100% { transform: translateX(-4vw); }
+  }
+  .bust {
+    position: absolute;
+    right: 58vw;
+    bottom: 0;
+    height: 78vh;
+    width: auto;
+    object-fit: contain;
+    filter: url(#grain);
+  }
+  @media (max-width: 860px) {
+    .bust { right: 50%; transform: translateX(50%); height: 74vh; bottom: 18vh; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sky { animation-duration: 0.001ms; }
+  }
+
+  /* ---------- nav — fixed over the background, independent of the content window ---------- */
+  .nav {
+    position: fixed;
+    top: var(--space-lg);
+    left: var(--space-xl);
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--paper-2);
+  }
+  @media (max-width: 640px) {
+    .nav { top: var(--space-md); left: var(--space-lg); }
+  }
+
+  /* a dark scrim that fades in behind the nav once the scrolling card's
+     content could otherwise pass underneath it — masks whatever text is
+     there instead of trying to recolor the nav to match two different
+     backgrounds at once */
+  .nav-scrim {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 110px;
+    z-index: 9;
+    background: linear-gradient(to bottom, oklch(19% 0.012 40 / 0.65), transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+  .nav-scrim.visible { opacity: 1; }
+
+  /* ---------- content: a floating, independently-scrolling window with the
+     fixed background showing through the transparent gap around it ----------
+     The native scrollbar is hidden entirely and replaced with a custom
+     bar-only thumb (.scrollbar-thumb) — no arrows, no track buttons, no
+     OS-theme chrome to fight. ---------- */
+  .content-frame {
+    position: fixed;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    bottom: var(--space-lg);
+    left: 44vw;
+    max-width: 760px;
+    background: var(--paper);
+  }
+  .content {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: clip;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  .scrollbar-thumb {
+    position: absolute;
+    right: 2px;
+    width: 4px;
+    background: var(--ink);
+    border-radius: 2px;
+    top: 0;
+    height: 40px;
+    cursor: pointer;
+    z-index: 5;
+  }
+
+  @media (max-width: 860px) {
+    .content-frame {
+      position: static;
+      margin: var(--space-md);
+      margin-top: 58vh;
+      max-width: none;
+      background: transparent;
+    }
+    .content {
+      position: static;
+      height: auto;
+      overflow: visible;
+      background: var(--paper);
+    }
+    .scrollbar-thumb { display: none; }
+    html, body { height: auto; overflow: visible; }
+  }
+
+  .mark-icon { flex: none; display: block; }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 1.6rem;
+    color: inherit;
+  }
+  .o-scan-wrap { position: relative; display: inline-block; clip-path: inset(0); }
+  .o-scan-bar {
+    position: absolute; left: -10%; right: -10%; height: 12%;
+    background: oklch(56% 0.17 45 / 0.9);
+    animation: scanY 2.4s cubic-bezier(0.65,0,0.35,1) infinite alternate;
+  }
+  @keyframes scanY { 0% { top: 4%; } 100% { top: 82%; } }
+  @media (prefers-reduced-motion: reduce) { .o-scan-bar { animation-duration: 0.001ms; } }
+
+  /* ---------- hero copy, now a normal block in the content column ---------- */
+  .hero {
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
+  }
+  @media (max-width: 860px) { .hero { padding-top: var(--space-xl); } }
+  .hero__headline {
+    font-size: clamp(2rem, 4.6vw, 3.6rem);
+    max-width: 12ch;
+    letter-spacing: -0.02em;
+  }
+  .hero__sub {
+    margin-top: var(--space-md);
+    max-width: 42ch;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  section { border-bottom: 1px solid var(--rule); }
+  .pad { padding-block: var(--space-2xl); }
+  @media (max-width: 640px) { .pad { padding-block: var(--space-xl); } }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .thesis h2 {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    max-width: 16ch;
+    margin-bottom: var(--space-lg);
+  }
+  .thesis p {
+    font-size: 1.1rem;
+    color: var(--muted);
+  }
+
+  .cap-row {
+    padding-block: var(--space-lg);
+    border-top: 1px solid var(--rule);
+  }
+  .cap-row:last-child { border-bottom: none; }
+  .cap-row h3 {
+    font-size: 1.25rem;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-sm);
+  }
+  .cap-row p { color: var(--muted); }
+
+  .flaw blockquote {
+    margin: var(--space-lg) 0 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: none;
+    font-size: clamp(1.4rem, 2.8vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    border-left: 3px solid var(--oxide);
+    padding-left: var(--space-lg);
+  }
+  .flaw blockquote em { font-style: normal; color: var(--oxide); }
+  .flaw p.context {
+    margin-top: var(--space-lg);
+    color: var(--muted);
+    font-size: 1.05rem;
+    padding-left: calc(var(--space-lg) + 3px);
+  }
+
+  .contact h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: var(--space-md); }
+  .contact p { color: var(--muted); margin-bottom: var(--space-md); }
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--paper-2);
+    border: 1px solid var(--ink);
+    padding: var(--space-sm) var(--space-lg);
+    cursor: pointer;
+    display: inline-block;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .btn:hover, .btn:focus-visible { background: var(--oxide); border-color: var(--oxide); }
+
+  footer { padding-block: var(--space-lg); border-bottom: none; }
+  .foot-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs, 0.4rem);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0.75 0" result="noiseAlpha"/>
+      <feComposite in="noiseAlpha" in2="SourceAlpha" operator="in" result="maskedNoise"/>
+      <feBlend in="SourceGraphic" in2="maskedNoise" mode="overlay"/>
+    </filter>
+  </svg>
+
+  <div class="fixed-scene">
+    <div class="sky"></div>
+    <img class="bust" src="assets/bust.png" alt="">
+  </div>
+
+  <div class="nav-scrim" id="navScrim"></div>
+
+  <nav class="nav" id="siteNav">
+    <svg class="mark-icon" width="24" height="24" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="21,2 40,21 21,40 2,21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+      <circle cx="21" cy="21" r="5" fill="oklch(56% 0.17 45)"/>
+    </svg>
+    <div class="wordmark">TAL<span class="o-scan-wrap">O<span class="o-scan-bar"></span></span>S</div>
+  </nav>
+
+  <div class="content-frame">
+    <div class="scrollbar-thumb" id="scrollbarThumb"></div>
+    <div class="content" id="contentWindow">
+      <section class="hero">
+        <div class="wrap">
+          <h1 class="hero__headline">The patrol never stops.</h1>
+          <p class="hero__sub">Talos scans your network, cloud, and API surface continuously — surfacing weak points the moment they appear, not once a quarter.</p>
+        </div>
+      </section>
+
+      <section class="thesis">
+        <div class="wrap pad">
+          <div class="eyebrow">Thesis</div>
+          <h2>Security that doesn't blink.</h2>
+          <p>Most tools check on a schedule — a scan last month, an audit last quarter. Talos runs continuously, watching your network, cloud, and API surface for the weak points that appear the moment your infrastructure changes. Nothing here waits for a calendar reminder.</p>
+        </div>
+      </section>
+
+      <section class="capabilities">
+        <div class="wrap pad">
+          <div class="eyebrow" style="margin-bottom: var(--space-lg);">How it works</div>
+
+          <div class="cap-row">
+            <h3>The Patrol</h3>
+            <p>Continuous, autonomous monitoring across network, cloud, and API surface. Nothing sleeps, nothing is checked on a schedule.</p>
+          </div>
+          <div class="cap-row">
+            <h3>The Scan</h3>
+            <p>AI-driven analysis re-evaluates your entire surface continuously, catching new weak points the moment they appear — not on a monthly or quarterly cycle.</p>
+          </div>
+          <div class="cap-row">
+            <h3>The Intervention</h3>
+            <p>Confirmed threats are contained automatically. Not flagged for later — stopped, while it's still happening.</p>
+          </div>
+          <div class="cap-row">
+            <h3>The Coastline</h3>
+            <p>Attack-surface mapping updates as your infrastructure changes. What needed guarding last quarter isn't what needs guarding today.</p>
+          </div>
+          <div class="cap-row">
+            <h3>Human Escalation</h3>
+            <p>Every critical finding still routes to a person before anything drastic happens. Autonomy has a ceiling here on purpose.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="flaw">
+        <div class="wrap pad">
+          <div class="eyebrow">Where the name comes from</div>
+          <blockquote>Talos was bronze, tireless, and nearly invincible — <em>until one flaw ended him.</em></blockquote>
+          <p class="context">In the myth, that flaw only mattered because Talos eventually stopped moving. We built the product to never do that — a system that scans continuously, so the gap a real threat needs never gets the chance to open.</p>
+        </div>
+      </section>
+
+      <section class="contact" id="contact">
+        <div class="wrap pad">
+          <h2>Request access.</h2>
+          <p>Talos is currently onboarding a limited number of security teams.</p>
+          <button class="btn" type="button">Request Access</button>
+        </div>
+      </section>
+
+      <footer>
+        <div class="wrap foot-row">
+          <span>Talos — Autonomous Threat Detection</span>
+          <span>Security@talos.ai</span>
+          <span>&copy; 2026</span>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // On mobile the whole page scrolls (the card is normal-flow, not its own
+    // scroll container), so once the card's top edge scrolls above the nav's
+    // fixed position, swap the nav to ink so it stays legible on paper.
+    const nav = document.getElementById('siteNav');
+    const navScrim = document.getElementById('navScrim');
+    const frameEl = document.querySelector('.content-frame');
+    function updateNavContrast() {
+      const navBox = nav.getBoundingClientRect();
+      const frameBox = frameEl.getBoundingClientRect();
+      const overlapsHorizontally = navBox.right > frameBox.left;
+      const cardApproaching = frameBox.top <= navBox.bottom + 40;
+      navScrim.classList.toggle('visible', overlapsHorizontally && cardApproaching);
+    }
+    window.addEventListener('scroll', updateNavContrast, { passive: true });
+    window.addEventListener('resize', updateNavContrast);
+    updateNavContrast();
+
+    const contentWindow = document.getElementById('contentWindow');
+    const thumb = document.getElementById('scrollbarThumb');
+    const frame = document.querySelector('.content-frame');
+
+    const TRACK_PADDING = 10; // keeps the thumb from ever touching the card's edge
+
+    function updateThumb() {
+      const trackHeight = frame.clientHeight - TRACK_PADDING * 2;
+      const scrollable = contentWindow.scrollHeight - contentWindow.clientHeight;
+      const thumbHeight = Math.max(30, (contentWindow.clientHeight / contentWindow.scrollHeight) * trackHeight);
+      const maxThumbTravel = trackHeight - thumbHeight;
+      const top = TRACK_PADDING + (scrollable > 0 ? (contentWindow.scrollTop / scrollable) * maxThumbTravel : 0);
+      thumb.style.height = thumbHeight + 'px';
+      thumb.style.transform = `translateY(${top}px)`;
+    }
+
+    contentWindow.addEventListener('scroll', updateThumb, { passive: true });
+    window.addEventListener('resize', updateThumb);
+    updateThumb();
+
+    // drag the thumb to scroll
+    let dragging = false, dragStartY = 0, dragStartScrollTop = 0;
+    thumb.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      dragStartY = e.clientY;
+      dragStartScrollTop = contentWindow.scrollTop;
+      thumb.setPointerCapture(e.pointerId);
+    });
+    thumb.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const trackHeight = frame.clientHeight - TRACK_PADDING * 2;
+      const thumbHeight = thumb.offsetHeight;
+      const scrollable = contentWindow.scrollHeight - contentWindow.clientHeight;
+      const maxThumbTravel = trackHeight - thumbHeight;
+      const deltaY = e.clientY - dragStartY;
+      const deltaScroll = maxThumbTravel > 0 ? (deltaY / maxThumbTravel) * scrollable : 0;
+      contentWindow.scrollTop = dragStartScrollTop + deltaScroll;
+    });
+    thumb.addEventListener('pointerup', () => { dragging = false; });
+  </script>
+</body>
+</html>

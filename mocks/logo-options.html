@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aegis — logo options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; overflow-x: clip; }
+  body {
+    background: oklch(95% 0.012 70);
+    color: oklch(19% 0.012 40);
+    font-family: "IBM Plex Mono", monospace;
+    padding: 2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    max-width: 1100px;
+    margin-inline: auto;
+  }
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: oklch(98% 0.006 70);
+    border: 1px solid oklch(80% 0.010 60);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 210px;
+  }
+  .card__mark {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .card__label {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    border-top: 1px solid oklch(80% 0.010 60);
+    padding-top: 0.6rem;
+    margin-top: 0.75rem;
+  }
+
+  .wordmark {
+    font-family: "Big Shoulders Display", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: oklch(19% 0.012 40);
+    line-height: 0.9;
+  }
+  .accent { color: oklch(56% 0.17 45); }
+
+  /* 1. Pure wordmark */
+  #m1 .wordmark { font-size: 2.6rem; letter-spacing: -0.02em; }
+
+  /* 2. Wordmark + boxed monogram */
+  #m2 .card__mark { gap: 0.9rem; }
+  .mono-box {
+    width: 52px; height: 52px;
+    border: 3px solid oklch(19% 0.012 40);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Big Shoulders Display", sans-serif;
+    font-weight: 900;
+    font-size: 1.7rem;
+    flex: none;
+  }
+  #m2 .wordmark { font-size: 1.9rem; letter-spacing: -0.01em; }
+
+  /* 3. Wordmark + structural (post-and-lintel) icon */
+  #m3 .card__mark { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+  .lintel-icon { flex: none; }
+  #m3 .wordmark { font-size: 2rem; letter-spacing: -0.01em; }
+
+  /* 4. Wordmark + underline rule (the ground it stands on) */
+  #m4 .wordmark { font-size: 2.4rem; letter-spacing: -0.02em; }
+  .rule-block { display: inline-block; }
+  .rule-block__bar { height: 6px; background: oklch(56% 0.17 45); margin-top: 0.5rem; width: 100%; }
+
+  /* 5. Wordmark in drafting brackets */
+  #m5 .card__mark { position: relative; padding: 0.9rem 1.4rem; }
+  #m5 .wordmark { font-size: 1.85rem; letter-spacing: -0.01em; }
+  .bracket { position: absolute; width: 14px; height: 14px; border-color: oklch(19% 0.012 40); }
+  .bracket--tl { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
+  .bracket--tr { top: 0; right: 0; border-top: 2px solid; border-right: 2px solid; }
+  .bracket--bl { bottom: 0; left: 0; border-bottom: 2px solid; border-left: 2px solid; }
+  .bracket--br { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
+</style>
+</head>
+<body>
+  <div class="grid">
+
+    <div class="card" id="m1">
+      <div class="card__mark">
+        <div class="wordmark">AEGIS</div>
+      </div>
+      <div class="card__label">1 — Pure wordmark</div>
+    </div>
+
+    <div class="card" id="m2">
+      <div class="card__mark">
+        <div class="mono-box">A</div>
+        <div class="wordmark">AEGIS</div>
+      </div>
+      <div class="card__label">2 — Boxed monogram</div>
+    </div>
+
+    <div class="card" id="m3">
+      <div class="card__mark">
+        <svg class="lintel-icon" width="46" height="30" viewBox="0 0 46 30" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="42" height="6" fill="oklch(19% 0.012 40)"/>
+          <rect x="4" y="8" width="6" height="20" fill="oklch(19% 0.012 40)"/>
+          <rect x="36" y="8" width="6" height="20" fill="oklch(19% 0.012 40)"/>
+        </svg>
+        <div class="wordmark">AEGIS</div>
+      </div>
+      <div class="card__label">3 — Post &amp; lintel mark</div>
+    </div>
+
+    <div class="card" id="m4">
+      <div class="card__mark">
+        <div class="rule-block">
+          <div class="wordmark">AEGIS</div>
+          <div class="rule-block__bar"></div>
+        </div>
+      </div>
+      <div class="card__label">4 — Underline / ground line</div>
+    </div>
+
+    <div class="card" id="m5">
+      <div class="card__mark">
+        <span class="bracket bracket--tl"></span>
+        <span class="bracket bracket--tr"></span>
+        <span class="bracket bracket--bl"></span>
+        <span class="bracket bracket--br"></span>
+        <div class="wordmark">AEGIS</div>
+      </div>
+      <div class="card__label">5 — Drafting brackets</div>
+    </div>
+
+  </div>
+</body>
+</html>

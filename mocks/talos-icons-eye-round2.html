@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talos — eye concepts, round 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; overflow-x: clip; }
+  body {
+    background: oklch(95% 0.012 70);
+    color: oklch(19% 0.012 40);
+    font-family: "IBM Plex Mono", monospace;
+    padding: 2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.1rem;
+    max-width: 1100px;
+    margin-inline: auto;
+  }
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: oklch(98% 0.006 70);
+    border: 1px solid oklch(80% 0.010 60);
+    padding: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 190px;
+  }
+  .card__mark { flex: 1; display: flex; align-items: center; gap: 0.9rem; }
+  .card__label {
+    font-size: 0.64rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    border-top: 1px solid oklch(80% 0.010 60);
+    padding-top: 0.5rem;
+    margin-top: 0.6rem;
+  }
+  .icon { flex: none; display: block; }
+  .ink { stroke: oklch(19% 0.012 40); }
+  .oxide { stroke: oklch(56% 0.17 45); }
+  .oxide-fill { fill: oklch(56% 0.17 45); }
+  .ink-fill { fill: oklch(19% 0.012 40); }
+
+  .wm {
+    font-family: "Big Shoulders Display", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 1.9rem;
+    color: oklch(19% 0.012 40);
+  }
+  .o-scan-wrap { position: relative; display: inline-block; clip-path: inset(0); }
+  .o-scan-bar {
+    position: absolute; left: -10%; right: -10%; height: 12%;
+    background: oklch(56% 0.17 45 / 0.9);
+    animation: scanY 2.4s cubic-bezier(0.65,0,0.35,1) infinite alternate;
+  }
+  @keyframes scanY { 0% { top: 4%; } 100% { top: 82%; } }
+  @media (prefers-reduced-motion: reduce) { .o-scan-bar { animation-duration: 0.001ms; } }
+</style>
+</head>
+<body>
+  <div class="grid">
+
+    <!-- 1. Vertical slit pupil (non-human, mythic) -->
+    <div class="card" id="v1">
+      <div class="card__mark">
+        <svg class="icon" width="48" height="30" viewBox="0 0 48 30" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 15 C14 2 34 2 46 15 C34 28 14 28 2 15 Z" fill="none" class="ink" stroke-width="2.2"/>
+          <ellipse cx="24" cy="15" rx="3.2" ry="10" class="oxide-fill"/>
+        </svg>
+        <div class="wm">TAL<span class="o-scan-wrap">O<span class="o-scan-bar"></span></span>S</div>
+      </div>
+      <div class="card__label">1 — Vertical slit pupil</div>
+    </div>
+
+    <!-- 2. Faceted / low-poly eye -->
+    <div class="card" id="v2">
+      <div class="card__mark">
+        <svg class="icon" width="48" height="30" viewBox="0 0 48 30" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="2,15 14,4 34,4 46,15 34,26 14,26" fill="none" class="ink" stroke-width="2.2" stroke-linejoin="round"/>
+          <polygon points="24,8 31,15 24,22 17,15" class="oxide-fill"/>
+        </svg>
+        <div class="wm">TAL<span class="o-scan-wrap">O<span class="o-scan-bar"></span></span>S</div>
+      </div>
+      <div class="card__label">2 — Faceted / low-poly eye</div>
+    </div>
+
+    <!-- 3. Sutured shut eye -->
+    <div class="card" id="v3">
+      <div class="card__mark">
+        <svg class="icon" width="48" height="26" viewBox="0 0 48 26" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 13 C14 22 34 22 46 13" fill="none" class="ink" stroke-width="3" stroke-linecap="round"/>
+          <line x1="14" y1="15" x2="14" y2="21" class="oxide" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="24" y1="17" x2="24" y2="23" class="oxide" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="34" y1="15" x2="34" y2="21" class="oxide" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <div class="wm">TAL<span class="o-scan-wrap">O<span class="o-scan-bar"></span></span>S</div>
+      </div>
+      <div class="card__label">3 — Sutured shut</div>
+    </div>
+
+    <!-- 4. Offset double-exposure eye (brand motif reused) -->
+    <div class="card" id="v4">
+      <div class="card__mark">
+        <svg class="icon" width="48" height="30" viewBox="0 0 48 30" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 17 C18 4 38 4 50 17 C38 30 18 30 6 17 Z" fill="none" class="oxide" stroke-width="2" opacity="0.75" transform="translate(-4,-3)"/>
+          <path d="M2 15 C14 2 34 2 46 15 C34 28 14 28 2 15 Z" fill="none" class="ink" stroke-width="2.2"/>
+          <circle cx="24" cy="15" r="4.5" class="ink-fill"/>
+        </svg>
+        <div class="wm">TAL<span class="o-scan-wrap">O<span class="o-scan-bar"></span></span>S</div>
+      </div>
+      <div class="card__label">4 — Offset double-exposure</div>
+    </div>
+
+    <!-- 5. Diamond / angular eye -->
+    <div class="card" id="v5">
+      <div class="card__mark">
+        <svg class="icon" width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="21,2 40,21 21,40 2,21" fill="none" class="ink" stroke-width="2.2" stroke-linejoin="round"/>
+          <circle cx="21" cy="21" r="5" class="oxide-fill"/>
+        </svg>
+        <div class="wm">TAL<span class="o-scan-wrap">O<span class="o-scan-bar"></span></span>S</div>
+      </div>
+      <div class="card__label">5 — Diamond / angular eye</div>
+    </div>
+
+  </div>
+</body>
+</html>
