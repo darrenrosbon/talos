@@ -118,11 +118,26 @@
     height: 100%;
     width: 100%;
     object-fit: contain;
+    object-position: center bottom;
     border: none;
     outline: none;
   }
+  /* on mobile the bust lives inside the content card instead of the fixed
+     scene, anchored to the card's top edge — it sits flush against the card
+     and scrolls with it, so iOS toolbar resizes can't shift it. */
+  .bust-mobile { display: none; }
   @media (max-width: 860px) {
-    .bust-wrap { position: fixed; right: 50%; transform: translateX(50%); height: 90vh; bottom: 10vh; }
+    .bust-wrap { display: none; }
+    .bust-mobile {
+      display: block;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      height: min(52vh, 150vw);
+      pointer-events: none;
+    }
+    .bust-mobile img { display: block; height: 100%; width: auto; }
   }
   @media (prefers-reduced-motion: reduce) {
     .sky { animation-duration: 0.001ms; }
@@ -199,7 +214,8 @@
 
   @media (max-width: 860px) {
     .content-frame {
-      position: static;
+      position: relative;
+      inset: auto;
       margin: var(--space-md);
       margin-top: 58vh;
       max-width: none;
@@ -354,6 +370,9 @@
   </nav>
 
   <div class="content-frame">
+    <div class="bust-mobile" aria-hidden="true">
+      <img src="assets/bust.webp" alt="">
+    </div>
     <div class="scrollbar-thumb" id="scrollbarThumb"></div>
     <div class="content" id="contentWindow">
       <section class="hero">
