@@ -3,7 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Talos</title>
+<title>Talos: continuous security testing for network, cloud and APIs</title>
+<meta name="description" content="Talos rescans your network, cloud and API attack surface continuously, so new exposures are found when they appear, not at the next audit.">
+<meta name="theme-color" content="#1a1613">
+<link rel="canonical" href="https://darrenrosbon.github.io/talos/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Talos">
+<meta property="og:title" content="Talos: continuous security testing">
+<meta property="og:description" content="Your network, cloud and APIs, rescanned continuously. New exposures are found when they appear, not at the next audit.">
+<meta property="og:url" content="https://darrenrosbon.github.io/talos/">
+<meta property="og:image" content="https://darrenrosbon.github.io/talos/assets/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Talos wordmark beside a marble statue against a storm sky">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Talos: continuous security testing">
+<meta name="twitter:description" content="Your network, cloud and APIs, rescanned continuously. New exposures are found when they appear, not at the next audit.">
+<meta name="twitter:image" content="https://darrenrosbon.github.io/talos/assets/og.png">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -18,7 +35,7 @@
     --ink:    oklch(19% 0.012 40);
     --muted:  oklch(40% 0.010 50);
     --rule:   oklch(82% 0.010 60);
-    --oxide:  oklch(56% 0.17 45);
+    --oxide:  oklch(60% 0.22 27);
     --oxide-pale: oklch(87% 0.02 70);
 
     --font-display: "Big Shoulders Display", sans-serif;
@@ -36,10 +53,13 @@
   * { box-sizing: border-box; }
   html, body {
     margin: 0;
-    height: 100%;
-    overflow: hidden;
     background: transparent;
   }
+  html {
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar { display: none; }
   body {
     color: var(--ink);
     font-family: var(--font-body);
@@ -47,7 +67,7 @@
     line-height: 1.6;
   }
   @media (max-width: 860px) {
-    html, body { height: auto; overflow: visible; }
+    html { scroll-snap-type: none; }
   }
   a { color: inherit; }
   :focus-visible { outline: 2px solid var(--oxide); outline-offset: 2px; }
@@ -131,11 +151,14 @@
     .bust-mobile {
       display: block;
       position: absolute;
-      bottom: 100%;
+      bottom: calc(100% - 3rem);
       left: 50%;
       transform: translateX(-50%);
-      height: min(52vh, 150vw);
+      height: min(62vh, 165vw);
       pointer-events: none;
+      /* the torso is cropped flat, so it fades out into the sky instead of ending in a line */
+      -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+              mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
     }
     .bust-mobile img { display: block; height: 100%; width: auto; }
   }
@@ -176,60 +199,203 @@
   }
   .nav-scrim.visible { opacity: 1; }
 
-  /* ---------- content: a floating, independently-scrolling window with the
-     fixed background showing through the transparent gap around it ----------
-     The native scrollbar is hidden entirely and replaced with a custom
-     bar-only thumb (.scrollbar-thumb) — no arrows, no track buttons, no
-     OS-theme chrome to fight. ---------- */
+  /* ---------- content: full-height paper pages that snap into place and
+     scroll past the fixed background, which stays put behind them ---------- */
   .content-frame {
-    position: fixed;
-    top: var(--space-lg);
-    right: var(--space-lg);
-    bottom: var(--space-lg);
-    left: 44vw;
-    max-width: 760px;
-    background: var(--paper);
+    width: min(760px, calc(56vw - var(--space-lg)));
+    margin-left: 44vw;
   }
   .content {
+    display: block;
+    /* text sits straight on the photo, so the palette flips to light */
+    --ink: oklch(97% 0.008 70);
+    --muted: oklch(86% 0.010 70);
+    --rule: oklch(97% 0.008 70 / 0.28);
+    --oxide: oklch(60% 0.22 27);
+    color: var(--ink);
+    text-shadow: 0 1px 18px oklch(15% 0.01 40 / 0.55);
+  }
+  /* darkens the sky behind the text column only; the statue side stays bright */
+  .fixed-scene::after {
+    content: "";
     position: absolute;
     inset: 0;
-    overflow-y: auto;
-    overflow-x: clip;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    background: linear-gradient(90deg,
+      oklch(15% 0.012 40 / 0) 10%,
+      oklch(15% 0.012 40 / 0.12) 22%,
+      oklch(15% 0.012 40 / 0.34) 33%,
+      oklch(15% 0.012 40 / 0.58) 43%,
+      oklch(15% 0.012 40 / 0.74) 54%,
+      oklch(15% 0.012 40 / 0.8) 68%,
+      oklch(15% 0.012 40 / 0.8) 100%);
+    pointer-events: none;
   }
-  .content::-webkit-scrollbar { display: none; }
-
-  .scrollbar-thumb {
-    position: absolute;
-    right: 2px;
-    width: 4px;
-    background: var(--ink);
-    border-radius: 2px;
-    top: 0;
-    height: 40px;
-    cursor: pointer;
-    z-index: 5;
+  @media (max-width: 860px) {
+    .fixed-scene::after { background: oklch(15% 0.012 40 / 0.6); }
   }
+  .content > section {
+    min-height: calc(100svh - 2 * var(--space-lg));
+    margin-block: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: none;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+  .content > section > .wrap { width: 100%; }
 
   @media (max-width: 860px) {
     .content-frame {
       position: relative;
-      inset: auto;
+      width: auto;
       margin: var(--space-md);
-      margin-top: 58vh;
-      max-width: none;
+      margin-top: 60vh;
+    }
+    .content > section { position: relative; z-index: 1; }
+    .content > section {
+      min-height: 0;
+      margin-block: 0;
       background: transparent;
+      display: block;
+      border-bottom: 1px solid var(--rule);
+      scroll-snap-align: none;
     }
-    .content {
-      position: static;
-      height: auto;
-      overflow: visible;
-      background: var(--paper);
-    }
-    .scrollbar-thumb { display: none; }
-    html, body { height: auto; overflow: visible; }
   }
+
+  /* ---------- page indicator ---------- */
+  .pager {
+    position: fixed;
+    right: var(--space-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .pager a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+  .pager a::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border: 1.5px solid var(--paper-2);
+    border-radius: 50%;
+    opacity: 0.6;
+    transition: height 0.25s ease, background 0.25s ease, opacity 0.25s ease, border-radius 0.25s ease;
+  }
+  .pager a:hover::before { opacity: 1; }
+  .pager a[aria-current="true"]::before {
+    height: 22px;
+    border-radius: 4px;
+    background: oklch(60% 0.22 27);
+    border-color: oklch(60% 0.22 27);
+    opacity: 1;
+  }
+  @media (max-width: 860px) { .pager { display: none; } }
+
+  /* ---------- patrol feed (hero) ---------- */
+  .feed-head {
+    margin-top: var(--space-xl);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--oxide);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: 0.25; } }
+  .feed {
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.9;
+    height: calc(5 * 1.9 * 0.78rem);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%);
+            mask-image: linear-gradient(to bottom, transparent, #000 35%);
+  }
+  .feed div { display: flex; gap: 0.9rem; white-space: nowrap; }
+  .feed .t { color: var(--muted); opacity: 0.75; }
+  .feed .k { width: 3.2em; flex: none; }
+  .feed .hit { color: var(--oxide); }
+  .feed .d { overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+  @media (max-width: 640px) { .feed .t { display: none; } }
+
+  /* ---------- attack surface radar ---------- */
+  .radar-wrap {
+    margin-top: var(--space-xl);
+    display: flex;
+    gap: var(--space-xl);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .radar { width: min(260px, 100%); height: auto; flex: none; overflow: visible; }
+  .radar .ring { fill: none; stroke: var(--rule); }
+  .radar .sweep { transform-origin: 150px 150px; animation: sweep 6s linear infinite; }
+  @keyframes sweep { to { transform: rotate(360deg); } }
+  .radar .blip { fill: var(--ink); cursor: pointer; transition: r 0.15s ease; }
+  .radar .blip.hit { fill: var(--oxide); }
+  .radar .blip:hover, .radar .blip:focus-visible, .radar .blip[aria-pressed="true"] { r: 9; outline: none; }
+  .radar .blip[aria-pressed="true"] { stroke: var(--ink); stroke-width: 2; }
+  .radar-read { flex: 1; min-width: 200px; }
+  .radar-read .name {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    margin: 0.3rem 0;
+    overflow-wrap: anywhere;
+  }
+  .radar-read .desc { color: var(--muted); }
+  .radar-read .eyebrow.hit { color: var(--oxide); }
+  @media (prefers-reduced-motion: reduce) {
+    .radar .sweep, .pulse { animation: none; }
+  }
+
+  /* ---------- Crete in relief (name page) ---------- */
+  .circuit { margin-top: var(--space-lg); }
+  .crete {
+    /* breaks out of the text padding so the model uses the full column */
+    width: calc(100% + 2 * var(--space-xl));
+    margin-inline: calc(-1 * var(--space-xl));
+    aspect-ratio: 2.5 / 1;
+    /* every edge fades fully to transparent, so the sea never ends in a visible line */
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent),
+                        linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent),
+                        linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent);
+            mask-composite: intersect;
+  }
+  @media (max-width: 640px) {
+    .crete { width: calc(100% + 2 * var(--space-lg)); margin-inline: calc(-1 * var(--space-lg)); }
+  }
+  .crete canvas { display: block; width: 100%; height: 100%; }
+  .circuit-read {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem var(--space-lg);
+    align-items: baseline;
+    margin-top: var(--space-sm);
+  }
+  .circuit-read .lap {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+  .circuit-read .note { color: var(--muted); font-size: 0.9rem; }
 
   .mark-icon { flex: none; display: block; }
   .wordmark {
@@ -243,7 +409,7 @@
   .o-scan-wrap { position: relative; display: inline-block; clip-path: inset(0); }
   .o-scan-bar {
     position: absolute; left: -10%; right: -10%; height: 12%;
-    background: oklch(56% 0.17 45 / 0.9);
+    background: oklch(60% 0.22 27 / 0.9);
     animation: scanY 2.4s cubic-bezier(0.65,0,0.35,1) infinite alternate;
   }
   @keyframes scanY { 0% { top: 4%; } 100% { top: 82%; } }
@@ -321,24 +487,37 @@
     padding-left: calc(var(--space-lg) + 3px);
   }
 
-  .contact h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: var(--space-md); }
-  .contact p { color: var(--muted); margin-bottom: var(--space-md); }
+  .contact { justify-content: space-between; }
+  .contact > .wrap.pad {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .contact .eyebrow { display: flex; align-items: center; gap: 0.5rem; margin-bottom: var(--space-md); }
+  .contact h2 { font-size: clamp(2.6rem, 5.2vw, 4.4rem); line-height: 0.98; margin-bottom: var(--space-lg); }
+  .contact p { color: var(--muted); font-size: 1.15rem; max-width: 36ch; margin-bottom: var(--space-xl); }
+  .contact .btn { font-size: 0.95rem; padding: 1rem 1.75rem; }
+  .contact footer { border-top: 1px solid var(--rule); }
   .btn {
+    text-decoration: none;
     font-family: var(--font-mono);
     font-size: 0.85rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     background: var(--ink);
-    color: var(--paper-2);
+    color: oklch(19% 0.012 40);
     border: 1px solid var(--ink);
+    text-shadow: none;
     padding: var(--space-sm) var(--space-lg);
     cursor: pointer;
     display: inline-block;
     transition: background 0.2s ease, border-color 0.2s ease;
   }
-  .btn:hover, .btn:focus-visible { background: var(--oxide); border-color: var(--oxide); }
+  .btn:hover, .btn:focus-visible { background: var(--oxide); border-color: var(--oxide); color: oklch(15% 0.012 40); }
 
-  footer { padding-block: var(--space-lg); border-bottom: none; }
+  footer { padding-block: var(--space-lg); border-bottom: none; margin-top: auto; }
   .foot-row {
     display: flex;
     flex-direction: column;
@@ -364,82 +543,116 @@
   <nav class="nav" id="siteNav">
     <svg class="mark-icon" width="24" height="24" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
       <polygon points="21,2 40,21 21,40 2,21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-      <circle cx="21" cy="21" r="5" fill="oklch(56% 0.17 45)"/>
+      <circle cx="21" cy="21" r="5" fill="oklch(60% 0.22 27)"/>
     </svg>
     <div class="wordmark">TAL<span class="o-scan-wrap">O<span class="o-scan-bar"></span></span>S</div>
   </nav>
+
+  <nav class="pager" id="pager" aria-label="Page"></nav>
 
   <div class="content-frame">
     <div class="bust-mobile" aria-hidden="true">
       <img src="assets/bust.webp" alt="">
     </div>
-    <div class="scrollbar-thumb" id="scrollbarThumb"></div>
     <div class="content" id="contentWindow">
       <section class="hero">
         <div class="wrap">
-          <h1 class="hero__headline">The patrol never stops.</h1>
-          <p class="hero__sub">Talos scans your network, cloud, and API surface continuously — surfacing weak points the moment they appear, not once a quarter.</p>
+          <h1 class="hero__headline">Find new exposures as they appear.</h1>
+          <p class="hero__sub">Talos rescans your network, cloud accounts and APIs continuously. When a deploy opens something up, you hear about it that day, not at the next audit.</p>
+          <div class="feed-head eyebrow"><span class="pulse" aria-hidden="true"></span>Patrol, sample data</div>
+          <div class="feed" id="feed" aria-hidden="true"></div>
         </div>
       </section>
 
       <section class="thesis">
         <div class="wrap pad">
-          <div class="eyebrow">Thesis</div>
-          <h2>Security that doesn't blink.</h2>
-          <p>Most tools check on a schedule — a scan last month, an audit last quarter. Talos runs continuously, watching your network, cloud, and API surface for the weak points that appear the moment your infrastructure changes. Nothing here waits for a calendar reminder.</p>
+          <div class="eyebrow">Why continuous</div>
+          <h2>Audits describe the past.</h2>
+          <p>A quarterly scan or an annual pen test tells you what your infrastructure looked like on the day it ran. Meanwhile teams ship code, open ports and leave test environments running. Talos keeps scanning between audits, so the gaps that open in the meantime get found.</p>
+        </div>
+      </section>
+
+      <section class="surface">
+        <div class="wrap pad">
+          <div class="eyebrow">Attack surface</div>
+          <h2 style="font-size: clamp(1.6rem, 3vw, 2.4rem); max-width: 16ch;">Your perimeter, as it is today.</h2>
+          <div class="radar-wrap">
+            <svg class="radar" viewBox="0 0 300 300" role="group" aria-label="Sample attack surface. Select a point for details.">
+              <circle class="ring" cx="150" cy="150" r="140"/>
+              <circle class="ring" cx="150" cy="150" r="95"/>
+              <circle class="ring" cx="150" cy="150" r="50"/>
+              <line class="ring" x1="150" y1="10" x2="150" y2="290"/>
+              <line class="ring" x1="10" y1="150" x2="290" y2="150"/>
+              <g class="sweep" aria-hidden="true"><path d="M150 150 L150 10 A140 140 0 0 1 220 29 Z" fill="oklch(60% 0.22 27 / 0.22)"/></g>
+              <g id="blips"></g>
+            </svg>
+            <div class="radar-read" aria-live="polite">
+              <div class="eyebrow" id="rk">Sample asset</div>
+              <p class="name" id="rn"></p>
+              <p class="desc" id="rd"></p>
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="capabilities">
         <div class="wrap pad">
-          <div class="eyebrow" style="margin-bottom: var(--space-lg);">How it works</div>
+          <div class="eyebrow" style="margin-bottom: var(--space-lg);">What it does</div>
 
           <div class="cap-row">
-            <h3>The Patrol</h3>
-            <p>Continuous, autonomous monitoring across network, cloud, and API surface. Nothing sleeps, nothing is checked on a schedule.</p>
+            <h3>Monitoring</h3>
+            <p>Watches your network, cloud accounts and public APIs around the clock.</p>
           </div>
           <div class="cap-row">
-            <h3>The Scan</h3>
-            <p>AI-driven analysis re-evaluates your entire surface continuously, catching new weak points the moment they appear — not on a monthly or quarterly cycle.</p>
+            <h3>Scanning</h3>
+            <p>Re-analyses the whole surface whenever it changes, instead of on a monthly or quarterly schedule.</p>
           </div>
           <div class="cap-row">
-            <h3>The Intervention</h3>
-            <p>Confirmed threats are contained automatically. Not flagged for later — stopped, while it's still happening.</p>
+            <h3>Containment</h3>
+            <p>When a threat is confirmed, Talos contains it straight away rather than adding it to a ticket queue.</p>
           </div>
           <div class="cap-row">
-            <h3>The Coastline</h3>
-            <p>Attack-surface mapping updates as your infrastructure changes. What needed guarding last quarter isn't what needs guarding today.</p>
+            <h3>Attack surface map</h3>
+            <p>Updated as assets are added or removed, so you can see what is exposed today, not what was exposed last quarter.</p>
           </div>
           <div class="cap-row">
-            <h3>Human Escalation</h3>
-            <p>Every critical finding still routes to a person before anything drastic happens. Autonomy has a ceiling here on purpose.</p>
+            <h3>Human sign-off</h3>
+            <p>Critical findings go to a person before Talos takes any drastic action. The automation has a limit, by design.</p>
           </div>
         </div>
       </section>
 
       <section class="flaw">
         <div class="wrap pad">
-          <div class="eyebrow">Where the name comes from</div>
-          <blockquote>Talos was bronze, tireless, and nearly invincible — <em>until one flaw ended him.</em></blockquote>
-          <p class="context">In the myth, that flaw only mattered because Talos eventually stopped moving. We built the product to never do that — a system that scans continuously, so the gap a real threat needs never gets the chance to open.</p>
+          <div class="eyebrow">The name</div>
+          <blockquote>In Greek myth, Talos was a bronze giant who circled Crete every day. <em>He had one weak point.</em></blockquote>
+          <p class="context">Every system has one. What matters is whether you find it before someone else does. That is the job Talos does for your infrastructure.</p>
+          <div class="circuit" id="circuit">
+            <div class="crete" id="crete" role="img" aria-label="Relief model of Crete with a marker circling its coastline"></div>
+            <div class="circuit-read">
+              <span class="eyebrow" id="lapk">Circuit 1 of 3</span>
+              <span class="lap" id="lapp">0% complete</span>
+              <span class="note">Talos circled Crete three times a day, and never stopped.</span>
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="contact" id="contact">
         <div class="wrap pad">
-          <h2>Request access.</h2>
-          <p>Talos is currently onboarding a limited number of security teams.</p>
-          <button class="btn" type="button">Request Access</button>
+          <div class="eyebrow"><span class="pulse" aria-hidden="true"></span>Onboarding now</div>
+          <h2>Request access</h2>
+          <p>We are onboarding a small number of security teams. Email us a few lines about your setup and we will get back to you.</p>
+          <a class="btn" href="mailto:security@talos.ai?subject=Talos%20access">Email security@talos.ai</a>
         </div>
-      </section>
-
       <footer>
         <div class="wrap foot-row">
-          <span>Talos — Autonomous Threat Detection</span>
-          <span>Security@talos.ai</span>
+          <span>Talos &middot; Autonomous threat detection</span>
           <span>&copy; 2026</span>
         </div>
       </footer>
+      </section>
+
     </div>
   </div>
 
@@ -457,49 +670,109 @@
       const cardApproaching = frameBox.top <= navBox.bottom + 40;
       navScrim.classList.toggle('visible', overlapsHorizontally && cardApproaching);
     }
+    // page indicator: one dot per page, current one stretches and turns oxide
+    const pages = [...document.querySelectorAll('.content > section')];
+    const pager = document.getElementById('pager');
+    const labels = ['Intro', 'Why continuous', 'Attack surface', 'What it does', 'The name', 'Request access'];
+    const dots = pages.map((page, i) => {
+      const a = document.createElement('a');
+      a.href = '#';
+      a.setAttribute('aria-label', labels[i] || 'Page ' + (i + 1));
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        page.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      pager.appendChild(a);
+      return a;
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) dots.forEach((d, i) => pages[i] === en.target ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current'));
+      });
+    }, { rootMargin: '-50% 0px -50% 0px' });
+    pages.forEach((p) => io.observe(p));
+    dots.forEach((d, i) => { if (i === 0) d.setAttribute('aria-current', 'true'); });
+
+    // patrol feed (sample data)
+    const FEED = [
+      ['scan', 'api.acme.io', '12 endpoints, clean'],
+      ['scan', '10.0.4.0/24', '38 hosts, clean'],
+      ['scan', 'aws:eu-west-1', '214 resources, clean'],
+      ['found', 's3://acme-staging', 'public read, new'],
+      ['scan', 'vpn.acme.io', 'tls ok'],
+      ['found', 'staging-4.acme.io', 'port 9200 open, new'],
+      ['scan', 'gcp:prod', '97 resources, clean']
+    ];
+    const feedEl = document.getElementById('feed');
+    let feedI = 0;
+    function feedTick() {
+      const [k, who, what] = FEED[feedI++ % FEED.length];
+      const row = document.createElement('div');
+      const t = document.createElement('span'); t.className = 't'; t.textContent = new Date().toTimeString().slice(0, 8);
+      const kk = document.createElement('span'); kk.className = 'k' + (k === 'found' ? ' hit' : ''); kk.textContent = k;
+      const w = document.createElement('span'); w.textContent = who;
+      const d = document.createElement('span'); d.className = 'd'; d.textContent = what;
+      row.append(t, kk, w, d);
+      feedEl.appendChild(row);
+      while (feedEl.children.length > 5) feedEl.removeChild(feedEl.firstChild);
+    }
+    for (let n = 0; n < 4; n++) feedTick();
+    setInterval(feedTick, 1800);
+
+    // radar (sample data)
+    const ASSETS = [
+      [190, 80, 'api.acme.io', 'Public API. 12 endpoints, last scanned 2 minutes ago. No findings.', false],
+      [95, 110, 'vpn.acme.io', 'Remote access gateway. TLS and ciphers look fine.', false],
+      [210, 170, 'aws:eu-west-1', 'Cloud account. 214 resources, none exposed.', false],
+      [130, 215, 'staging-4.acme.io', 'New today. Port 9200 is open to the internet. Flagged.', true],
+      [60, 175, '10.0.4.0/24', 'Internal subnet. 38 hosts, no findings.', false],
+      [160, 130, 'db-prod-3', 'Database host with a reachable admin panel. Waiting for sign-off.', true]
+    ];
+    const blipsEl = document.getElementById('blips');
+    const rk = document.getElementById('rk'), rn = document.getElementById('rn'), rd = document.getElementById('rd');
+    const blipEls = ASSETS.map((a) => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', a[0]); c.setAttribute('cy', a[1]); c.setAttribute('r', 6);
+      c.setAttribute('class', 'blip' + (a[4] ? ' hit' : ''));
+      c.setAttribute('tabindex', '0'); c.setAttribute('role', 'button');
+      c.setAttribute('aria-label', a[2]); c.setAttribute('aria-pressed', 'false');
+      const pick = () => {
+        blipEls.forEach((b) => b.setAttribute('aria-pressed', 'false'));
+        c.setAttribute('aria-pressed', 'true');
+        rk.textContent = a[4] ? 'Flagged' : 'Clean';
+        rk.classList.toggle('hit', a[4]);
+        rn.textContent = a[2]; rd.textContent = a[3];
+      };
+      c.addEventListener('click', pick);
+      c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+      blipsEl.appendChild(c);
+      c.pick = pick;
+      return c;
+    });
+    blipEls[0].pick();
+
+    // Crete in relief: loaded only when the name page is within a screen of view
+    const lapk = document.getElementById('lapk'), lapp = document.getElementById('lapp');
+    const circuitEl = document.getElementById('circuit');
+    let creteStarted = false;
+    function startCrete() {
+      if (creteStarted) return;
+      creteStarted = true;
+      import('./assets/crete.js')
+        .then((m) => m.start(document.getElementById('crete'), (c, p) => {
+          lapk.textContent = 'Circuit ' + c + ' of 3';
+          lapp.textContent = p + '% complete';
+        }))
+        .then((r) => { if (!r) circuitEl.hidden = true; })
+        .catch(() => { circuitEl.hidden = true; });
+    }
+    new IntersectionObserver((entries, o) => {
+      if (entries[0].isIntersecting) { startCrete(); o.disconnect(); }
+    }, { rootMargin: '100% 0px' }).observe(document.querySelector('.flaw'));
+
     window.addEventListener('scroll', updateNavContrast, { passive: true });
     window.addEventListener('resize', updateNavContrast);
     updateNavContrast();
-
-    const contentWindow = document.getElementById('contentWindow');
-    const thumb = document.getElementById('scrollbarThumb');
-    const frame = document.querySelector('.content-frame');
-
-    const TRACK_PADDING = 10; // keeps the thumb from ever touching the card's edge
-
-    function updateThumb() {
-      const trackHeight = frame.clientHeight - TRACK_PADDING * 2;
-      const scrollable = contentWindow.scrollHeight - contentWindow.clientHeight;
-      const thumbHeight = Math.max(30, (contentWindow.clientHeight / contentWindow.scrollHeight) * trackHeight);
-      const maxThumbTravel = trackHeight - thumbHeight;
-      const top = TRACK_PADDING + (scrollable > 0 ? (contentWindow.scrollTop / scrollable) * maxThumbTravel : 0);
-      thumb.style.height = thumbHeight + 'px';
-      thumb.style.transform = `translateY(${top}px)`;
-    }
-
-    contentWindow.addEventListener('scroll', updateThumb, { passive: true });
-    window.addEventListener('resize', updateThumb);
-    updateThumb();
-
-    // drag the thumb to scroll
-    let dragging = false, dragStartY = 0, dragStartScrollTop = 0;
-    thumb.addEventListener('pointerdown', (e) => {
-      dragging = true;
-      dragStartY = e.clientY;
-      dragStartScrollTop = contentWindow.scrollTop;
-      thumb.setPointerCapture(e.pointerId);
-    });
-    thumb.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const trackHeight = frame.clientHeight - TRACK_PADDING * 2;
-      const thumbHeight = thumb.offsetHeight;
-      const scrollable = contentWindow.scrollHeight - contentWindow.clientHeight;
-      const maxThumbTravel = trackHeight - thumbHeight;
-      const deltaY = e.clientY - dragStartY;
-      const deltaScroll = maxThumbTravel > 0 ? (deltaY / maxThumbTravel) * scrollable : 0;
-      contentWindow.scrollTop = dragStartScrollTop + deltaScroll;
-    });
-    thumb.addEventListener('pointerup', () => { dragging = false; });
   </script>
 </body>
 </html>
